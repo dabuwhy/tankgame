@@ -4,7 +4,7 @@ import 'package:tankgame/place.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flame/flame.dart';
-import 'package:just_audio/just_audio.dart';
+
 class OrangeExplosion {
   final Place place;
   final List<Sprite> sprites = [];

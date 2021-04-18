@@ -8,14 +8,14 @@ import 'package:tankgame/widgets/wall.dart';
 import 'package:flame/keyboard.dart';
 import 'package:flutter/services.dart' show RawKeyDownEvent, RawKeyEvent, RawKeyUpEvent,LogicalKeyboardKey;
 import 'dart:math';
-import 'package:just_audio/just_audio.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:flame/gestures.dart';
 
-class Place extends Game with KeyboardEvents{
+class Place extends Game with DoubleTapDetector,KeyboardEvents{
+  bool running = true;
   static double placeWidth=480;
   static double placeHeight=320;
-  final AudioPlayer player=AudioPlayer();
-  final AudioPlayer bgm=AudioPlayer();
-  final AudioPlayer move=AudioPlayer();
+
   TextConfig tScore;
   TextConfig tLife,tTime;
   int score=0,life=0;
@@ -39,7 +39,7 @@ class Place extends Game with KeyboardEvents{
         size.x,
         size.y,
       ),
-      Paint()..color = Color(0xAf3CB371),
+      Paint()..color = Color(0xAfCFCFCF),
     );
     walls.forEach((element) {
       element.render(c);
@@ -114,13 +114,16 @@ class Place extends Game with KeyboardEvents{
   @override
   Future<void> onLoad() async {
     this.rightpadCount=0;
+    this.running=true;
     startTime=addTime=nowTime=DateTime.now().microsecondsSinceEpoch;
     tScore=TextConfig(fontSize: 18, textAlign: TextAlign.left,lineHeight: 0,fontFamily:'Awesome Font' );
     tLife=TextConfig(fontSize: 18, textAlign: TextAlign.left,lineHeight: 1,fontFamily:'Awesome Font' );
     tTime=TextConfig(fontSize: 18, textAlign: TextAlign.left,lineHeight: 2,fontFamily:'Awesome Font' );
-
+    print(window.physicalSize);
+    print(window.locale.countryCode);
     print(size);   //360,640   392.7,825.4   placeSize:placeHeight,placeWidth
-    baseX=(size.y-placeWidth-2*Wall.brickWidth)/2;
+    double mmax=(size.x>size.y)?size.x:size.y;
+    baseX=(mmax-placeWidth-2*Wall.brickWidth)/2;
     if (tank == null) {
       tank = Tank(this,Offset(baseX+Tank.tankHalfWidth+Wall.brickWidth,Tank.tankHalfWidth+Wall.brickWidth),startTime,type: 1,tankAngle: 0,turretAngle: 0);
     }
@@ -135,25 +138,27 @@ class Place extends Game with KeyboardEvents{
     this.addWalls(Offset(baseX+300,100),Offset(baseX+350,250),WallType.steel);
     this.addWalls(Offset(baseX+400,100),Offset(baseX+450,250),WallType.water);
     // walls.add(Wall(this,Offset(50,50),Offset(150,150)));
-    this.bgm.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/bgm.mp3")));
+    // this.bgm.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/start.mp3")));
     // this.bgm.setLoopMode(LoopMode.all);
-    this.bgm.setVolume(0.2);
-    this.bgm.play();
-    this.move.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/move.wav")));
-    this.move.setLoopMode(LoopMode.all);
-    this.move.setVolume(0.1);
+    // this.bgm.setVolume(0.2);
+    // this.bgm.play();
+
+    FlameAudio.play('start.mp3',volume: 0.5);
+    // FlameAudio.bgm.initialize();
+    // FlameAudio.bgm.dispose();
+    // FlameAudio.bgm.play('move.wav', volume: .25);
   }
 
   void onLeftJoypadChange(Offset offset) {
     if (offset == Offset.zero) {
       tank.handAngle = null;
-      this.move.pause();
+      // FlameAudio.bgm.pause();
     } else {
       tank.handAngle = offset.direction;
       if(!tank.rightTouch){
         tank.rightHandAngle=tank.handAngle;
       }
-      this.move.play();
+      // FlameAudio.bgm.resume();
     }
     tank.speedPercent=sqrt(1-(offset.distanceSquared-2500)*(offset.distanceSquared-2500)/625e4); //offset.distanceSquared/2500;
   }
@@ -198,6 +203,15 @@ class Place extends Game with KeyboardEvents{
         walls.add(Wall(this,leftUp.translate(Wall.brickWidth*i,Wall.brickWidth*j),leftUp.translate(Wall.brickWidth*(i+1),Wall.brickWidth*(j+1)),type));
       }
     }
+  }
+  @override
+  void onDoubleTap() {
+    if (running) {
+      pauseEngine();
+    } else {
+      resumeEngine();
+    }
+    running = !running;
   }
   List<int> mKey=[0,0,0,0];
   @override

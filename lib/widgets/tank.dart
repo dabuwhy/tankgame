@@ -29,14 +29,12 @@ class Tank {
     this.preShotTime=place.nowTime;
     this.rightHandAngle=this.handAngle;
     this.rightTouch=false;
-    tankPaints.add(enemyPaint);
-    tankPaints.add(lightPaint);
   }
   int poNeg;
   // 准备Paint对象
   Paint lightPaint = Paint()..color = Color(0xffdddddd);
-  Paint yellowPaint = Paint()..color = Color(0xffCD8500);
-  Paint enemyPaint = Paint()..color = Color(0xffee7777);
+  Paint yellowPaint = Paint()..color = Color(0xafCD6600);
+  Paint enemyPaint = Paint()..color = Color(0xefCD3700);
   void render(Canvas c) {
     // 将canvas的原点设置在坦克的坐标上
     c.save();
@@ -44,7 +42,7 @@ class Tank {
     // rotate the whole tank
     c.rotate(tankAngle);
     // 绘制坦克主体
-    c.drawRect(Rect.fromLTWH(-12, -10, 24, 20),tankPaints[this.type]);
+    c.drawRect(Rect.fromLTWH(-12, -10, 24, 20),lightPaint);
     // 绘制轮子
     c.drawRect(Rect.fromLTWH(-15, -15, 30, 5),yellowPaint);
     c.drawRect(Rect.fromLTWH(-15, 10, 30, 5),yellowPaint);
@@ -56,7 +54,7 @@ class Tank {
     c.drawRect(Rect.fromLTWH(7, -2, 13, 4),yellowPaint);
     c.drawRect(Rect.fromLTWH(20, -3, 4, 6),yellowPaint);
     if(this.type==0){
-      c.drawCircle(Offset(0,0), 7, yellowPaint);
+      c.drawCircle(Offset(0,0), 7, enemyPaint);
     }
     else if(this.type==1){
       c.drawRect(Rect.fromLTWH(-8, -7, 15, 14),yellowPaint);

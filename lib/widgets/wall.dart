@@ -15,8 +15,8 @@ class Wall {
   static double brickWidth=16;
   double radian;
   List<Paint> paints=[];
-  Paint brickPaint = Paint()..color = Color(0x9fD2691E);
-  Paint steelPaint = Paint()..color = Color(0x9f8B7D7B);
+  Paint brickPaint = Paint()..color = Color(0xafCD6600);
+  Paint steelPaint = Paint()..color = Color(0x9f363636);
   Paint waterPaint = Paint()..color = Color(0x9f1E70BF);
   Wall(this.place, this.leftTopPos,this.rightBottomPos,this.type){
     this.mid=(leftTopPos+rightBottomPos)/2;

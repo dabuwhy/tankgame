@@ -6,7 +6,8 @@ import 'package:tankgame/widgets/tank.dart';
 import 'package:flame/src/assets/assets_cache.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:just_audio/just_audio.dart';
+// import 'package:just_audio/just_audio.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 class Bullet {
   final Place place;
@@ -50,10 +51,8 @@ class Bullet {
         if(element.type!=WallType.water){
           if(element.judgeIn(position,0)){
             isExplode = true;
-            // print(timeCount);
             place.explosions.add(OrangeExplosion(place,position));
-            // place.player.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/explosion.wav"),duration:Duration(milliseconds: 500)));
-            // place.player.play();
+            FlameAudio.play('explosion.wav',volume: 0.3-timeCount/300);
             if(element.type==WallType.brick){
               place.walls.remove(element);
             }
@@ -67,9 +66,10 @@ class Bullet {
           place.explosions.add(OrangeExplosion(place,position));
           place.enemys.remove(element);
           place.score++;
-          place.player.setVolume(1-timeCount/300);
-          place.player.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/explosion.wav")));
-          place.player.play();
+          // place.player.setVolume(1-timeCount/300);
+          // place.player.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/explosion.wav")));
+          // place.player.play();
+          FlameAudio.play('explosion.wav',volume: 1.0-timeCount/300);
           return;
         }
       }
@@ -78,8 +78,7 @@ class Bullet {
         place.explosions.add(OrangeExplosion(place,position));
         place.tank.position = Offset(place.baseX+Tank.tankHalfWidth+Wall.brickWidth,Tank.tankHalfWidth+Wall.brickWidth);
         place.life++;
-        place.player.setAudioSource(ProgressiveAudioSource(Uri.parse("asset:///assets/sounds/explosion.wav")));
-        place.player.play();
+        FlameAudio.play('explosion.wav');
         return;
       }
     }

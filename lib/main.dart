@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/game.dart';
@@ -8,18 +6,23 @@ import 'package:tankgame/widgets/button.dart';
 import 'package:flame/src/assets/assets_cache.dart';
 import 'package:tankgame/place.dart';
 import 'package:flame/flame.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 禁止所有UI层(设置全屏)
-  SystemChrome.setEnabledSystemUIOverlays([]);
   loadAssets();
-  final Place p=Place();
+  
   // 设置屏幕方向(设置屏幕方向为横向) 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]).then((value) =>{
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.landscapeLeft,
+  //   DeviceOrientation.landscapeRight,
+  // ]).then((value) =>{
+  Flame.device.fullScreen()
+  .then(
+    (response)=>Flame.device.setLandscape()
+  )
+  .then((response) {
+    final Place p=Place();
     runApp(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -57,7 +60,7 @@ Future main() async {
           ],
         ),
       ),
-    )
+    );
   });
   
   // 隐藏底部按钮栏
@@ -77,6 +80,6 @@ void loadAssets(){
     'explosion/explosion4.webp',
     'explosion/explosion5.webp',
   ]);
-  // Flame.assets.readBinaryFile("explosion0.ogg");
-  // Flame.assets.readBinaryFile("explosion1.wav");
+  FlameAudio.audioCache.loadAll(['explosion.wav', 'start.mp3']);
+  FlameAudio.bgm.loadAll(['move.wav']);
 }
